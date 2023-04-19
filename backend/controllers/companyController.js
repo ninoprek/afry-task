@@ -1,11 +1,12 @@
 const asyncHandler = require('express-async-handler');
 const Company = require('../models/companyModel');
+const User = require('../models/userModel');
 
 // @desc    Get Companies
 // @route   GET /api/companies
 // @access  Private
 const getCompanies = asyncHandler(async (req, res) => {
-  const companies = await Company.find();
+  const companies = await Company.find({ user: req.user.id });
 
   res.status(200).json(companies);
 })
@@ -21,7 +22,8 @@ const setCompany = asyncHandler(async (req, res) => {
   }
 
   const company = await Company.create({
-    name: req.body.name
+    name: req.body.name,
+    user: req.user.id
   });
 
   res.status(200).json({ message:  'Company created', body: company });
@@ -35,6 +37,21 @@ const updateCompany = asyncHandler(async (req, res) => {
   if (!company) {
     res.status(400);
     throw new Error('Company not found')
+  }
+
+
+  // Check for user
+  const user = await User.findById(req.user.id);
+
+  if (!user) {
+    res.status(401);
+    throw new Error ('User not found');
+  }
+
+  // Check if logged user is the same as the user who created the company
+  if (company.user.toString() !== user.id) {
+    res.status(401);
+    throw new Error('User not authorised');
   }
 
   const updatedCompany = await Company.findByIdAndUpdate(req.params.id, req.body, { new: true });
@@ -52,9 +69,21 @@ const deleteCompany = asyncHandler(async (req, res) => {
     res.status(400);
     throw new Error('Company not found')
   }
-  console.log(
-    company
-  );
+
+  // Check for user
+  const user = await User.findById(req.user.id);
+
+  if (!user) {
+    res.status(401);
+    throw new Error ('User not found');
+  }
+
+  // Check if logged user is the same as the user who created the company
+  if (company.user.toString() !== user.id) {
+    res.status(401);
+    throw new Error('User not authorised');
+  }
+
 
   await company.deleteOne();
 

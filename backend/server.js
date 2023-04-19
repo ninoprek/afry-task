@@ -11,7 +11,8 @@ connectDB();
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 
-app.use('/api/companies/', require('./routes/companiesRoutes'));
+app.use('/api/companies/', require('./routes/companyRoutes'));
+app.use('/api/users/', require('./routes/userRoutes'));
 
 app.use(errorHandler);
 
