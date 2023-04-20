@@ -15,7 +15,6 @@ const getCompanies = asyncHandler(async (req, res) => {
 // @route   POST /api/companies
 // @access  Private
 const setCompany = asyncHandler(async (req, res) => {
-  console.log(req.body);
   if (!req.body.name) {
     res.status(400)
     throw new Error('Please add a company name.');
@@ -23,7 +22,8 @@ const setCompany = asyncHandler(async (req, res) => {
 
   const company = await Company.create({
     name: req.body.name,
-    user: req.user.id
+    user: req.user.id,
+    employees: [req.user.id]
   });
 
   res.status(200).json({ message:  'Company created', body: company });
