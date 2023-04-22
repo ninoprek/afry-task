@@ -39,17 +39,13 @@ const updateCompany = asyncHandler(async (req, res) => {
     throw new Error('Company not found')
   }
 
-
-  // Check for user
-  const user = await User.findById(req.user.id);
-
-  if (!user) {
+  if (!req.user) {
     res.status(401);
     throw new Error ('User not found');
   }
 
   // Check if logged user is the same as the user who created the company
-  if (company.user.toString() !== user.id) {
+  if (company.user.toString() !== req.user.id) {
     res.status(401);
     throw new Error('User not authorised');
   }
@@ -70,20 +66,16 @@ const deleteCompany = asyncHandler(async (req, res) => {
     throw new Error('Company not found')
   }
 
-  // Check for user
-  const user = await User.findById(req.user.id);
-
-  if (!user) {
+  if (!req.user) {
     res.status(401);
     throw new Error ('User not found');
   }
 
   // Check if logged user is the same as the user who created the company
-  if (company.user.toString() !== user.id) {
+  if (company.user.toString() !== req.user.id) {
     res.status(401);
     throw new Error('User not authorised');
   }
-
 
   await company.deleteOne();
 
