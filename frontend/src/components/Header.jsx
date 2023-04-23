@@ -15,7 +15,7 @@ function Header() {
     const { name } = user;
     dispatch(logout());
     dispatch(reset());
-    navigate('/');
+    navigate("/");
     toast.success(`User ${name} has logged out!`)
   }
 

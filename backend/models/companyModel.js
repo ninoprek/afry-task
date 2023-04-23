@@ -3,11 +3,12 @@ const mongoose = require('mongoose');
 const companySchema = mongoose.Schema({
   name: {
     type: String,
-    required: [true, 'Please add a text value for company name']
+    required: [true, 'Please add a text value for company name'],
+    unique: true
   },
   employees: {
     type: [mongoose.Schema.Types.ObjectId],
-    ref: 'User'
+    ref: 'Employee'
   },
   user: {
     type: mongoose.Schema.Types.ObjectId,

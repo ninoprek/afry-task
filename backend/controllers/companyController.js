@@ -1,14 +1,31 @@
 const asyncHandler = require('express-async-handler');
 const Company = require('../models/companyModel');
-const User = require('../models/userModel');
+const Employee = require('../models/employeeModel');
 
 // @desc    Get Companies
 // @route   GET /api/companies
 // @access  Private
 const getCompanies = asyncHandler(async (req, res) => {
-  const companies = await Company.find({ user: req.user.id });
+  const ownedCompanies = await Company.find({ user: req.user.id });
+  const otherCompanies = await Company.find({ user: { $ne: req.user.id} });
 
-  res.status(200).json(companies);
+  res.status(200).json({ owned: ownedCompanies, other: otherCompanies });
+})
+
+// @desc    Get one company
+// @route   GET /api/companies/id
+// @access  Public
+const getCompany = asyncHandler(async (req, res) => {
+  const company = await Company.findById(req.params.id);
+
+  if (!company) {
+    res.status(400);
+    throw new Error('Company not found')
+  }
+
+  const employees = await Employee.find({"_id": {"$in": company["employees"]}});
+
+  res.status(200).json({ message:  `Company data ${ company.id }`, body: {company: company, employees: employees} });
 })
 
 // @desc    Set Companies
@@ -23,7 +40,7 @@ const setCompany = asyncHandler(async (req, res) => {
   const company = await Company.create({
     name: req.body.name,
     user: req.user.id,
-    employees: [req.user.id]
+    employees: []
   });
 
   res.status(200).json({ message:  'Company created', body: company });
@@ -56,7 +73,7 @@ const updateCompany = asyncHandler(async (req, res) => {
   res.status(200).json({ message:  `Updated company ${ req.params.id }`, body: updatedCompany });
 })
 // @desc    Delete Company
-// @route   DELETE /api/companies
+// @route   DELETE /api/companies/id
 // @access  Private
 const deleteCompany = asyncHandler(async (req, res) => {
   const company = await Company.findById(req.params.id);
@@ -79,11 +96,11 @@ const deleteCompany = asyncHandler(async (req, res) => {
 
   await company.deleteOne();
 
-  res.status(200).json({ message:  `Deleted company ${ req.params.id }`, body: req.params.id });
+  res.status(200).json({ message:  `Deleted company ${ req.params.id }`, id: req.params.id });
 })
 
-
 module.exports = {
+  getCompany,
   getCompanies,
   setCompany,
   updateCompany,
