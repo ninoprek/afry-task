@@ -117,7 +117,7 @@ const addEmployee = asyncHandler(async (req, res) => {
 })
 
 // @desc    Get unemployed
-// @route   GET /api/employees
+// @route   GET /api/employees/unemployed
 // @access  Private
 const getUnemployed = asyncHandler(async (req, res) => {
   if (!req.user) {
@@ -137,9 +137,33 @@ const getUnemployed = asyncHandler(async (req, res) => {
 
 })
 
+// @desc    Get unemployed
+// @route   GET /api/employees
+// @access  Private
+const getEmployees = asyncHandler(async (req, res) => {
+  if (!req.user) {
+    res.status(401);
+    throw new Error ('User not found');
+  }
+
+  const employed = await Employee.find({ company: {$ne: null} });
+  const unemployed = await Employee.find({ company: null });
+
+  if (!unemployed && !employed) {
+    res.status(400);
+    throw new Error(`There are no employees`);
+  }
+
+  res.status(200).json({
+    employed: employed,
+    unemployed: unemployed
+  })
+})
+
 module.exports = {
   createEmployee,
   removeEmployee,
   addEmployee,
-  getUnemployed
+  getUnemployed,
+  getEmployees
 }

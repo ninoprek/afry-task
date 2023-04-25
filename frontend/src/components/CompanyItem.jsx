@@ -20,7 +20,7 @@ function CompanyItem({ company, owned }) {
       <h2>{company.name}</h2>
       <button
         onClick={goToCompany}
-        className="btn"
+        className="employeeCompanyButton employeeCompanyButtonTitle"
       >Go to company</button>
       {owned &&
         <button

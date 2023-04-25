@@ -191,7 +191,11 @@ h3 {
   animation: spin 1.2s linear infinite;
 }
 
-.employeeContainer {
+.companyLogo {
+  margin: 0 20px 0 0;
+}
+
+.employeeContainer, .employeeListContainer {
   display: flex;
   justify-content: space-between;
   margin: 20px auto;
@@ -200,12 +204,17 @@ h3 {
   text-align: center;
 }
 
+.employeeListContainer {
+  flex-direction: column;
+}
+
 .employee {
   margin: 0 10px;
   font-size: larger;
 }
 
-.employeeRemoveButton, .employeeAddButton {
+.employeeRemoveButton, .employeeAddButton,
+.employeeCompanyButton {
   margin: 0 10px;
   border: none;
   background-color:transparent;
@@ -226,6 +235,43 @@ h3 {
 
 .employeeAddButton:hover {
   color: darkgreen;
+}
+
+.employeeCompanyButton {
+  color: black;
+  font-weight: 600;
+  padding: 5px;
+  border-radius: 5px;
+}
+
+.employeeCompanyButton:hover {
+  transform: scale(1.1);
+}
+
+.employeeListName {
+  padding: 0 5px 5px 10px;
+  font-size: larger;
+}
+
+.employeeCompany {
+  display: flex;
+  justify-content: space-between;
+  margin: 5px;
+  font-size: medium;
+}
+
+.employeeCompanyButtonTitle {
+  transition: all .2s ease-in-out;
+  font-size: medium;
+  background-color: black;
+  color: #f4f4f4;
+  border-radius: 5px;
+  padding: 5px;
+  margin: 0 0 10px 0;
+}
+
+.employeeCompanyButtonTitle:hover {
+  cursor: pointer;
 }
 
 @keyframes spin {

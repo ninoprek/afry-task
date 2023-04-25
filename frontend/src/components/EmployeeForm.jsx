@@ -3,27 +3,29 @@ import { useDispatch, useSelector } from "react-redux";
 import { createEmployee, reset } from "../features/employee/employeeSlice";
 import { toast } from "react-toastify";
 
-function EmployeeForm({ companyID, employeeCreated }) {
+function EmployeeForm({ companyID, employeeCreated, companies }) {
   const [name, setEmployeeName] = useState("");
   const [email, setEmployeeEmail] = useState("");
   const [position, setEmployeePosition] = useState("");
+  const [company, setEmployeeCompany] = useState(null);
 
   const dispatch = useDispatch();
 
-  const { isSuccessCreate, isError, message } = useSelector((state) => state.employee);
+  const { isSuccessCreate, isErrorCreate, isLoadingCreate, message } = useSelector((state) => state.employee);
 
   useEffect(() => {
-    if (isError) toast.error(message);
+    if (isErrorCreate && !isLoadingCreate) toast.error(message);
 
     if (isSuccessCreate) {
       toast.success(message);
       employeeCreated(true);
+
     }
 
     return () => {
-      if(isSuccessCreate) dispatch(reset());
+      if(isSuccessCreate || isErrorCreate) dispatch(reset());
     }
-  },[isError, message, isSuccessCreate, employeeCreated, dispatch]);
+  },[isErrorCreate, message, isSuccessCreate, dispatch]);
 
   const onSubmitHandler = e => {
     e.preventDefault();
@@ -32,12 +34,11 @@ function EmployeeForm({ companyID, employeeCreated }) {
       toast.error("Please add all employee information");
     } else {
       const employeeData = {
-        company: companyID,
+        company: companyID || company === "None" ? null : company,
         name: name,
         email: email,
         position: position
       }
-
       dispatch(createEmployee(employeeData));
     }
   }
@@ -46,7 +47,7 @@ function EmployeeForm({ companyID, employeeCreated }) {
     <section className="form">
       <form onSubmit={ onSubmitHandler }>
         <div className="form-group">
-          <label htmlFor="text">Name</label>
+          <label htmlFor="employeeName">Name</label>
           <input
             type="text"
             name="employeeName"
@@ -57,7 +58,7 @@ function EmployeeForm({ companyID, employeeCreated }) {
           ></input>
         </div>
         <div className="form-group">
-          <label htmlFor="text">Email</label>
+          <label htmlFor="employeeName">Email</label>
           <input
             type="email"
             name="employeeName"
@@ -68,7 +69,7 @@ function EmployeeForm({ companyID, employeeCreated }) {
           ></input>
         </div>
         <div className="form-group">
-          <label htmlFor="text">Position</label>
+          <label htmlFor="employeePosition">Position</label>
           <input
             type="text"
             name="employeePosition"
@@ -77,6 +78,22 @@ function EmployeeForm({ companyID, employeeCreated }) {
             value={ position }
             onChange={e => setEmployeePosition(e.target.value)}
           ></input>
+        </div>
+        <div className="form-group">
+          <label htmlFor="employeeCompany">My companies</label>
+          <select
+            name="employeeCompany"
+            id="employeeCompany"
+            placeholder="Select Company"
+            onChange={e => setEmployeeCompany(e.target.value)}
+          >
+            <option value={ null }>None</option>
+            { companies && companies.owned && (
+              companies.owned.map(comp =>
+                <option key={comp._id} value={ comp._id }>{ comp.name }</option>
+              )
+            )}
+          </select>
         </div>
         <div className="form-group">
           <button

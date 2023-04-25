@@ -6,9 +6,9 @@ const user = JSON.parse(localStorage.getItem('user'));
 
 const initialState = {
   user: user ? user : null,
-  isError: false,
-  isSuccess: false,
-  isLoading: false,
+  isErrorAuth: false,
+  isSuccessAuth: false,
+  isLoadingAuth: false,
   message: ''
 }
 
@@ -48,42 +48,42 @@ export const authSlice = createSlice({
   initialState,
   reducers: {
     reset: (state) => {
-      state.isLoading = false;
-      state.isSuccess = false;
-      state.isError = false;
+      state.isLoadingAuth = false;
+      state.isSuccessAuth = false;
+      state.isErrorAuth = false;
       state.message = '';
     }
   },
   extraReducers: (builder) =>  {
     builder
       .addCase(register.pending, (state) => {
-        state.isLoading = true;
+        state.isLoadingAuth = true;
       })
       .addCase(register.fulfilled, (state, action) => {
-        state.isLoading = false;
-        state.isSuccess = true;
+        state.isLoadingAuth = false;
+        state.isSuccessAuth = true;
         state.user = action.payload
       })
       .addCase(register.rejected, (state, action) => {
-        state.isLoading = false;
-        state.isError = true;
-        state.message = action.payload;
+        state.isLoadingAuth = false;
+        state.isErrorAuth = true;
+        state.messageAuth = action.payload;
         state.user = null;
       })
       .addCase(logout.fulfilled, (state) => {
         state.user = null;
       })
       .addCase(login.pending, (state) => {
-        state.isLoading = true;
+        state.isLoadingAuth = true;
       })
       .addCase(login.fulfilled, (state, action) => {
-        state.isLoading = false;
-        state.isSuccess = true;
+        state.isLoadingAuth = false;
+        state.isSuccessAuth = true;
         state.user = action.payload
       })
       .addCase(login.rejected, (state, action) => {
-        state.isLoading = false;
-        state.isError = true;
+        state.isLoadingAuth = false;
+        state.isErrorAuth = true;
         state.message = action.payload;
         state.user = null;
       })

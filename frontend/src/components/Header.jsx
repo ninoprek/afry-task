@@ -22,7 +22,8 @@ function Header() {
   return (
     <header className="header">
       <div className="logo">
-        <Link to="/">All companies</Link>
+        <Link className="companyLogo" to="/">All companies</Link>
+        <Link to="/employees">Employees</Link>
       </div>
       <ul>
         { user ? (

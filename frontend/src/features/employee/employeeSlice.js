@@ -5,11 +5,16 @@ const initialState = {
   employees: [],
   unemployed: [],
   isError: false,
+  isErrorCreate: false,
+  isErrorGet: false,
   isSuccess: false,
   isSuccessCreate: false,
   isSuccessAdd: false,
   isSuccessRemove: false,
+  isSuccessGet: false,
   isLoading: false,
+  isLoadingCreate: false,
+  isLoadingGet: false,
   message: ''
 }
 
@@ -81,34 +86,58 @@ export const getUnemployed = createAsyncThunk(
   }
 );
 
+// Get unemployed
+export const getEmployees = createAsyncThunk(
+  "empolyees/getEmployees",
+  async (_, thunkAPI) => {
+    try {
+      const token = thunkAPI.getState().auth.user.token;
+      return await employeeService.getEmployees(token);
+    } catch (error) {
+      const message = ( error.response && error.response.data
+        && error.response.data.message) ||
+        error.message || error.toString();
+
+      return thunkAPI.rejectWithValue(message);
+    }
+  }
+);
+
 export const employeeSlice = createSlice({
   name: "employees",
   initialState,
   reducers: {
     reset: (state) => {
       state.isLoading = false;
+      state.isLoadingCreate = false;
+      state.isLoadingGet = false;
       state.isSuccess = false;
       state.isSuccessCreate = false;
       state.isSuccessAdd = false;
       state.isSuccessRemove = false;
+      state.isSuccessGet = false;
       state.isError = false;
+      state.isErrorCreate = false;
+      state.isErrorGet = false;
       state.message = '';
+      state.employees = [];
+      state.unemployed = [];
     }
   },
   extraReducers: (builder) => {
     builder
       .addCase(createEmployee.pending, (state) => {
-        state.isLoading = true;
+        state.isLoadingCreate = true;
       })
       .addCase(createEmployee.fulfilled, (state, action) => {
-        state.isLoading = false;
+        state.isLoadingCreate = false;
         state.isSuccessCreate = true;
-        state.employees.push(action.payload.body);
+        action.payload.company ? state.unemployed.push(action.payload) : state.employees.push(action.payload);
         state.message = action.payload.message;
       })
       .addCase(createEmployee.rejected, (state, action) => {
-        state.isLoading = false;
-        state.isError = true;
+        state.isLoadingCreate = false;
+        state.isErrorCreate = true;
         state.message = action.payload;
       })
       .addCase(removeEmployee.pending, (state) => {
@@ -129,7 +158,6 @@ export const employeeSlice = createSlice({
         state.isLoading = true;
       })
       .addCase(addEmployee.fulfilled, (state, action) => {
-        console.log("ADD SUCCESFULL: ", action.payload);
         state.isLoading = false;
         state.isSuccessAdd = true;
         state.unemployed = state.unemployed.filter(employee => employee._id !== action.payload._id);
@@ -151,6 +179,21 @@ export const employeeSlice = createSlice({
       .addCase(getUnemployed.rejected, (state, action) => {
         state.isLoading = false;
         state.isError = true;
+        state.message = action.payload;
+      })
+      .addCase(getEmployees.pending, (state) => {
+        state.isLoadingGet = true;
+      })
+      .addCase(getEmployees.fulfilled, (state, action) => {
+        state.isLoadingGet = false;
+        state.isSuccessGet = true;
+        state.unemployed = action.payload.unemployed;
+        state.employees = action.payload.employed;
+        state.message = action.payload.message;
+      })
+      .addCase(getEmployees.rejected, (state, action) => {
+        state.isLoadingGet = false;
+        state.isErrorGet = true;
         state.message = action.payload;
       })
   }

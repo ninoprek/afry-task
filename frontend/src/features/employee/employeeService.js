@@ -54,11 +54,25 @@ const getUnemployed = async (token) => {
   return response.data;
 }
 
+// Get employees
+const getEmployees = async (token) => {
+  const config = {
+    headers:  {
+      Authorization: `Bearer ${token}`
+    }
+  }
+
+  const response = await axios.get(API_URL, config);
+
+  return response.data;
+}
+
 const employeeService = {
   createEmployee,
   removeEmployee,
   addEmployee,
-  getUnemployed
+  getUnemployed,
+  getEmployees
 }
 
 export default employeeService;

@@ -11,23 +11,22 @@ function Dashboard() {
   const navigate = useNavigate();
   const dispatch = useDispatch();
 
-  const { user } = useSelector((state) => state.auth);
+  const { user, isErrorAuth } = useSelector((state) => state.auth);
   const { companies, isLoading, isError, message } = useSelector((state) => state.company);
 
   useEffect(() => {
-    if(isError) toast.error(message);
-
     if(!user) {
       navigate("/login");
+    } else {
+      if(isError || isErrorAuth) toast.error(message);
+      dispatch(getCompanies());
+      return () => {
+        dispatch(reset());
+      }
     }
+  },[user, isError, isErrorAuth, message, dispatch, navigate])
 
-    dispatch(getCompanies());
-    return () => {
-      dispatch(reset());
-    }
-  },[user, isError, dispatch, navigate, message])
-
-  if (isLoading) return <Spinner />
+  if (isLoading || !user) return <Spinner />
 
   return (
     <>
@@ -39,7 +38,7 @@ function Dashboard() {
       <CompanyForm />
 
       <section className="content">
-        {companies.owned && companies.owned.length > 0 ?
+        { companies.owned && companies.owned.length > 0 ?
         (
           <>
             <h2>Companies owned by you</h2>
@@ -54,7 +53,7 @@ function Dashboard() {
       </section>
 
       <section className="content">
-        {companies.other && companies.other.length > 0 ?
+        { companies.other && companies.other.length > 0 ?
         (
           <>
           <h2>Other Companies</h2>
@@ -69,6 +68,8 @@ function Dashboard() {
           <h3>There are no companies created yet</h3>
         )}
       </section>
+
+
     </>
   )
 }

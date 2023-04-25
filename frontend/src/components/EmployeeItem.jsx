@@ -3,7 +3,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { FaCut, FaFileSignature } from "react-icons/fa";
 import { removeEmployee, addEmployee, reset } from "../features/employee/employeeSlice";
 
-function EmployeeItem({ employee, company, fetchData }) {
+function EmployeeItem({ employee, company, fetchData, owner }) {
   const dispatch = useDispatch();
   const { isSuccessAdd, isSuccessRemove } = useSelector((state) => state.employee);
 
@@ -41,7 +41,7 @@ function EmployeeItem({ employee, company, fetchData }) {
       <div
         className="employee"
       >{ `${employee.name} - ${employee.position}` }</div>
-      { employee.company ?
+      { owner ? employee.company ?
       (
         <button
           className="employeeRemoveButton"
@@ -55,8 +55,7 @@ function EmployeeItem({ employee, company, fetchData }) {
           onClick={handleAddEmployee}>
           <FaFileSignature />
         </button>
-      ) }
-
+      ) : ""}
     </div>
   )
 }

@@ -17,17 +17,17 @@ function Login() {
   const navigate = useNavigate();
   const dispatch = useDispatch();
 
-  const { user, isLoading, isError, isSuccess, message } = useSelector(
+  const { user, isLoadingAuth, isErrorAuth, isSuccessAuth, message } = useSelector(
     (state) => state.auth
   )
 
   useEffect(() => {
-    if (isError) toast.error(message);
+    if (isErrorAuth) toast.error(message);
 
-    if (isSuccess || user) navigate('/');
+    if (isSuccessAuth || user) navigate('/');
 
     dispatch(reset());
-  },[ user, isError, isSuccess, message, navigate, dispatch ]);
+  },[ isErrorAuth, isSuccessAuth, message, navigate, dispatch ]);
 
 
   const onChangeHandler = (e) => {
@@ -49,14 +49,14 @@ function Login() {
   }
 
   useEffect(() => {
-    if (isError) toast.error(message);
+    if (isErrorAuth) toast.error(message);
 
-    if (isSuccess || user) navigate('/');
+    if (isSuccessAuth || user) navigate('/');
 
     dispatch(reset());
-  },[ user, isError, isSuccess, message, navigate, dispatch ]);
+  },[ user, isErrorAuth, isSuccessAuth, message, navigate, dispatch ]);
 
-  if (isLoading) {
+  if (isLoadingAuth) {
     return <Spinner />
   }
 

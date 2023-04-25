@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useRef } from "react";
 import { useLocation } from "react-router-dom";
 import { useSelector, useDispatch } from "react-redux";
 import Spinner from "../components/Spinner";
@@ -10,12 +10,15 @@ import { getUnemployed } from "../features/employee/employeeSlice";
 function Company() {
   const [showCreate, setShowCreate] = useState(false);
   const [employeeCreated, setEmployeeCreated] = useState(false);
+
+  const owner = useRef(false);
+
   const dispatch = useDispatch();
   const location = useLocation();
 
-  const { user } = useSelector((state) => state.auth);
-  const { currentCompany , isLoading, isError, message } = useSelector((state) => state.company);
+  const { currentCompany , isLoading, isSuccess, isError, message } = useSelector((state) => state.company);
   const { unemployed } = useSelector((state) => state.employee);
+  const { user } = useSelector((state) => state.auth);
   const company = currentCompany?.company;
   const employees = currentCompany?.employees;
 
@@ -24,19 +27,12 @@ function Company() {
   useEffect(() => {
     if(isError) console.log(message);
 
-    if (!isLoading) {
-      fetchData();
-    }
+    if (!isLoading) fetchData();
 
     return () => {
       dispatch(reset());
     }
-  },[user, isError, dispatch, message, companyID]);
-
-  const fetchData = () => {
-    dispatch(getCompany(companyID));
-    dispatch(getUnemployed());
-  };
+  },[isError, dispatch, message]);
 
   useEffect(() => {
     if (employeeCreated) {
@@ -45,6 +41,17 @@ function Company() {
       setEmployeeCreated(false);
     }
   }, [employeeCreated, companyID, dispatch, showCreate]);
+
+  useEffect(() => {
+    console.log("IS SUCCESS: ", isSuccess);
+    if (user && company) owner.current = user._id === company.user;
+  }, [user, company, isSuccess]);
+
+  const fetchData = () => {
+    dispatch(getCompany(companyID));
+    dispatch(getUnemployed());
+  };
+
 
   if (isLoading) return <Spinner />
 
@@ -60,11 +67,13 @@ function Company() {
           <h2>Employees</h2>
           { employees.length > 0 ?
             (
-              employees.map((employee) => <EmployeeItem
-                                            key={ employee._id }
-                                            employee={ employee }
-                                            fetchData={ fetchData }
-                                          /> )
+              employees.map((employee) =>
+                <EmployeeItem
+                  key={ employee._id }
+                  employee={ employee }
+                  fetchData={ fetchData }
+                  owner={owner.current}
+                /> )
             ) :
             (
               <div>There are no employees in this company</div>
@@ -96,12 +105,14 @@ function Company() {
           unemployed && unemployed.length > 0 &&
           <section>
             <h2>Unemployed</h2>
-            { unemployed.map((employee) => <EmployeeItem
-                                              key={ employee._id }
-                                              employee={ employee }
-                                              company={ company }
-                                              fetchData={ fetchData }
-                                            /> )}
+            { unemployed.map((employee) =>
+              <EmployeeItem
+                key={ employee._id }
+                employee={ employee }
+                company={ company }
+                fetchData={ fetchData }
+                owner={owner.current}
+              /> )}
           </section>
         }
       </>
