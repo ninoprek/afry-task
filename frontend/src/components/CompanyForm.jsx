@@ -17,11 +17,12 @@ function CompanyForm() {
     <section className="form">
       <form onSubmit={ onSubmitHandler }>
         <div className="form-group">
-          <label htmlFor="text">Company name</label>
+          <label htmlFor="text">Your new company</label>
           <input
             type="text"
             name="companyName"
             id="companyName"
+            placeholder="Add company name"
             value={ name }
             onChange={e => setCompanyName(e.target.value)}
           ></input>

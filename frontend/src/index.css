@@ -191,6 +191,43 @@ h3 {
   animation: spin 1.2s linear infinite;
 }
 
+.employeeContainer {
+  display: flex;
+  justify-content: space-between;
+  margin: 20px auto;
+  background-color: #f4f4f4;
+  max-width: 500px;
+  text-align: center;
+}
+
+.employee {
+  margin: 0 10px;
+  font-size: larger;
+}
+
+.employeeRemoveButton, .employeeAddButton {
+  margin: 0 10px;
+  border: none;
+  background-color:transparent;
+  color: crimson;
+  transition: all .2s ease-in-out;
+}
+
+.employeeRemoveButton:hover,
+.employeeAddButton:hover {
+  cursor: pointer;
+  color: firebrick;
+  transform: scale(1.3);
+}
+
+.employeeAddButton {
+  color: green;
+}
+
+.employeeAddButton:hover {
+  color: darkgreen;
+}
+
 @keyframes spin {
   0% {
     transform: rotate(0deg);

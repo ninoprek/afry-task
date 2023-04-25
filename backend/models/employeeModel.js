@@ -10,6 +10,10 @@ const employeeSchema = mongoose.Schema({
     required: [true, 'Please add an email'],
     unique: true
   },
+  position: {
+    type: String,
+    required: [true, 'Please position'],
+  },
   company: {
     type: mongoose.Schema.Types.ObjectId,
     ref: 'Company'

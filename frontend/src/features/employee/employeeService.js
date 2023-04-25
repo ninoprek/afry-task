@@ -15,8 +15,50 @@ const createEmployee = async (employeeData, token) => {
   return response.data;
 }
 
+// Remove employee
+const removeEmployee = async (employeeData, token) => {
+  const config = {
+    headers:  {
+      Authorization: `Bearer ${token}`
+    }
+  }
+
+  const response = await axios.put(API_URL + "remove", employeeData, config);
+
+  return response.data;
+}
+
+// add employee
+const addEmployee = async (employeeData, token) => {
+  const config = {
+    headers:  {
+      Authorization: `Bearer ${token}`
+    }
+  }
+
+  const response = await axios.put(API_URL + "add", employeeData, config);
+
+  return response.data;
+}
+
+// Get unemployed
+const getUnemployed = async (token) => {
+  const config = {
+    headers:  {
+      Authorization: `Bearer ${token}`
+    }
+  }
+
+  const response = await axios.get(API_URL + 'unemployed', config);
+
+  return response.data;
+}
+
 const employeeService = {
-  createEmployee
+  createEmployee,
+  removeEmployee,
+  addEmployee,
+  getUnemployed
 }
 
 export default employeeService;

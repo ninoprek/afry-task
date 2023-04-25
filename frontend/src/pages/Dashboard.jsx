@@ -5,7 +5,7 @@ import CompanyForm from "../components/CompanyForm";
 import CompanyItem from "../components/CompanyItem";
 import Spinner from "../components/Spinner";
 import { getCompanies, reset } from "../features/company/companySlice";
-
+import { toast } from "react-toastify";
 
 function Dashboard() {
   const navigate = useNavigate();
@@ -15,7 +15,7 @@ function Dashboard() {
   const { companies, isLoading, isError, message } = useSelector((state) => state.company);
 
   useEffect(() => {
-    if(isError) console.log(message);
+    if(isError) toast.error(message);
 
     if(!user) {
       navigate("/login");

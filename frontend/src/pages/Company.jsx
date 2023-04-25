@@ -3,31 +3,40 @@ import { useLocation } from "react-router-dom";
 import { useSelector, useDispatch } from "react-redux";
 import Spinner from "../components/Spinner";
 import EmployeeForm from "../components/EmployeeForm";
+import EmployeeItem from "../components/EmployeeItem";
 import { getCompany, reset } from "../features/company/companySlice";
+import { getUnemployed } from "../features/employee/employeeSlice";
 
 function Company() {
   const [showCreate, setShowCreate] = useState(false);
   const [employeeCreated, setEmployeeCreated] = useState(false);
-
   const dispatch = useDispatch();
   const location = useLocation();
 
   const { user } = useSelector((state) => state.auth);
   const { currentCompany , isLoading, isError, message } = useSelector((state) => state.company);
-  const company = currentCompany.company;
-  const employees = currentCompany.employees;
+  const { unemployed } = useSelector((state) => state.employee);
+  const company = currentCompany?.company;
+  const employees = currentCompany?.employees;
 
   const companyID = location.state.companyID;
 
   useEffect(() => {
     if(isError) console.log(message);
 
-    dispatch(getCompany(companyID));
+    if (!isLoading) {
+      fetchData();
+    }
 
     return () => {
       dispatch(reset());
     }
   },[user, isError, dispatch, message, companyID]);
+
+  const fetchData = () => {
+    dispatch(getCompany(companyID));
+    dispatch(getUnemployed());
+  };
 
   useEffect(() => {
     if (employeeCreated) {
@@ -41,7 +50,7 @@ function Company() {
 
   return (
     <>
-      { company &&
+      { company && employees &&
       <>
         <section className="heading" >
           <h1>{company.name}</h1>
@@ -49,9 +58,13 @@ function Company() {
         </section>
         <section>
           <h2>Employees</h2>
-          {employees && employees.length > 0 ?
+          { employees.length > 0 ?
             (
-              employees.map((employee) => <div key={employee._id}>{employee.name}</div> )
+              employees.map((employee) => <EmployeeItem
+                                            key={ employee._id }
+                                            employee={ employee }
+                                            fetchData={ fetchData }
+                                          /> )
             ) :
             (
               <div>There are no employees in this company</div>
@@ -69,7 +82,7 @@ function Company() {
                 <>
                   <EmployeeForm
                     companyID={company._id}
-                    employeeCreated={ (isCreated) => { setEmployeeCreated(isCreated)} }
+                    employeeCreated={ isCreated => setEmployeeCreated(isCreated) }
                   />
                   <button
                     className="btn btn-block"
@@ -79,6 +92,18 @@ function Company() {
               )
           }
         </section>
+        {
+          unemployed && unemployed.length > 0 &&
+          <section>
+            <h2>Unemployed</h2>
+            { unemployed.map((employee) => <EmployeeItem
+                                              key={ employee._id }
+                                              employee={ employee }
+                                              company={ company }
+                                              fetchData={ fetchData }
+                                            /> )}
+          </section>
+        }
       </>
       }
     </>
