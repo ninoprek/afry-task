@@ -19,7 +19,6 @@ function EmployeeForm({ companyID, employeeCreated, companies }) {
     if (isSuccessCreate) {
       toast.success(message);
       employeeCreated(true);
-
     }
 
     return () => {
@@ -34,11 +33,12 @@ function EmployeeForm({ companyID, employeeCreated, companies }) {
       toast.error("Please add all employee information");
     } else {
       const employeeData = {
-        company: companyID || company === "None" ? null : company,
+        company: companyID || (company === "None" ? null : company),
         name: name,
         email: email,
         position: position
       }
+
       dispatch(createEmployee(employeeData));
     }
   }
@@ -79,22 +79,24 @@ function EmployeeForm({ companyID, employeeCreated, companies }) {
             onChange={e => setEmployeePosition(e.target.value)}
           ></input>
         </div>
-        <div className="form-group">
-          <label htmlFor="employeeCompany">My companies</label>
-          <select
-            name="employeeCompany"
-            id="employeeCompany"
-            placeholder="Select Company"
-            onChange={e => setEmployeeCompany(e.target.value)}
-          >
-            <option value={ null }>None</option>
-            { companies && companies.owned && (
-              companies.owned.map(comp =>
-                <option key={comp._id} value={ comp._id }>{ comp.name }</option>
-              )
-            )}
-          </select>
-        </div>
+        { companies &&
+          <div className="form-group">
+            <label htmlFor="employeeCompany">My companies</label>
+            <select
+              name="employeeCompany"
+              id="employeeCompany"
+              placeholder="Select Company"
+              onChange={e => setEmployeeCompany(e.target.value)}
+            >
+              <option value={ null }>None</option>
+              { companies.owned && (
+                companies.owned.map(comp =>
+                  <option key={comp._id} value={ comp._id }>{ comp.name }</option>
+                )
+              )}
+            </select>
+          </div>
+        }
         <div className="form-group">
           <button
             className="btn btn-block"

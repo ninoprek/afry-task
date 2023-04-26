@@ -18,7 +18,7 @@ function EmployeeItem({ employee, company }) {
         <div className="employeeListName">
           { `${employee.name} - ${employee.position}` }
         </div>
-      { employee.company ?
+      { company && employee.company ?
       (
         <div className="employeeCompany"> Employer:
           <button

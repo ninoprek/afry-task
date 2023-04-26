@@ -37,13 +37,13 @@ function Company() {
   useEffect(() => {
     if (employeeCreated) {
       dispatch(getCompany(companyID));
+      dispatch(getUnemployed());
       setShowCreate(false);
       setEmployeeCreated(false);
     }
   }, [employeeCreated, companyID, dispatch, showCreate]);
 
   useEffect(() => {
-    console.log("IS SUCCESS: ", isSuccess);
     if (user && company) owner.current = user._id === company.user;
   }, [user, company, isSuccess]);
 

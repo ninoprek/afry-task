@@ -22,9 +22,7 @@ function Employees() {
     if(!user) navigate("/login");
     else {
       if(isErrorGet) toast.error(message);
-      console.log("SUCCESS: ", isSuccessGet);
       if (!isSuccessGet) {
-        console.log("GET EMPLOYEES");
         dispatch(getEmployees());
         dispatch(getCompanies());
       }
@@ -33,7 +31,6 @@ function Employees() {
   }, [user, isErrorGet, isSuccessGet, dispatch]);
 
   useEffect(() => {
-    console.log("EMPLOYEE CREATED: ", employeeCreated);
     if (employeeCreated) {
       dispatch(getEmployees());
       setEmployeeCreated(false);

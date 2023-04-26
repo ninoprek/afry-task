@@ -94,6 +94,10 @@ const deleteCompany = asyncHandler(async (req, res) => {
     throw new Error('User not authorised');
   }
 
+  if (company.employees.length > 0) {
+    const employees = await Employee.updateMany({"_id": {"$in": company["employees"]}}, { company: null });
+  }
+
   await company.deleteOne();
 
   res.status(200).json({ message:  `Deleted company ${ req.params.id }`, id: req.params.id });
