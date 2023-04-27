@@ -27,8 +27,7 @@ function Login() {
     if (isSuccessAuth || user) navigate('/');
 
     dispatch(reset());
-  },[ isErrorAuth, isSuccessAuth, message, navigate, dispatch ]);
-
+  },[ user, isErrorAuth, isSuccessAuth, message, navigate, dispatch ]);
 
   const onChangeHandler = (e) => {
     setFormData((prevState) =>({
@@ -47,14 +46,6 @@ function Login() {
 
     dispatch(login(userData));
   }
-
-  useEffect(() => {
-    if (isErrorAuth) toast.error(message);
-
-    if (isSuccessAuth || user) navigate('/');
-
-    dispatch(reset());
-  },[ user, isErrorAuth, isSuccessAuth, message, navigate, dispatch ]);
 
   if (isLoadingAuth) {
     return <Spinner />
